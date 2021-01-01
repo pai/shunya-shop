@@ -1,0 +1,23 @@
+{
+  "name": "shunya-shop",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "start": "node backend/server",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pai/shunya-shop.git"
+  },
+  "author": "Pai",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pai/shunya-shop/issues"
+  },
+  "homepage": "https://github.com/pai/shunya-shop#readme",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
