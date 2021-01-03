@@ -3,7 +3,7 @@ import { Form, Button, Row, Col } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
-import { getUserDetails } from '../actions/userActions'
+import { getUserDetails, updateUserProfile } from '../actions/userActions'
 
 const ProfileScreen = ({ location, history }) => {
   const [name, setName] = useState('')
@@ -21,6 +21,10 @@ const ProfileScreen = ({ location, history }) => {
   const userLogin = useSelector((state) => state.userLogin)
 
   const { userInfo } = userLogin
+
+  const userUpdateProfile = useSelector((state) => state.userUpdateProfile)
+
+  const { success } = userUpdateProfile
 
   useEffect(() => {
     if (!userInfo) {
@@ -42,7 +46,7 @@ const ProfileScreen = ({ location, history }) => {
       setMessage('Passwords do not match')
     }
     {
-      //DISPATCH UPDATE PROFILE
+      dispatch(updateUserProfile({ id: user._id, name, email, password }))
     }
   }
 
@@ -52,9 +56,10 @@ const ProfileScreen = ({ location, history }) => {
         <h2>User Profile</h2>
         {message && <Message variant='danger'>{message}</Message>}
         {error && <Message variant='danger'>{error}</Message>}
+        {success && <Message variant='success'>Profile updated</Message>}
         {loading && <Loader></Loader>}
         <Form onSubmit={submitHandler}>
-          <Form.Group controlID='name'>
+          <Form.Group controlId='name'>
             <Form.Label>Name</Form.Label>
             <Form.Control
               type='name'
@@ -64,7 +69,7 @@ const ProfileScreen = ({ location, history }) => {
             ></Form.Control>
           </Form.Group>
 
-          <Form.Group controlID='email'>
+          <Form.Group controlId='email'>
             <Form.Label>Email Address</Form.Label>
             <Form.Control
               type='email'
@@ -74,7 +79,7 @@ const ProfileScreen = ({ location, history }) => {
             ></Form.Control>
           </Form.Group>
 
-          <Form.Group controlID='password'>
+          <Form.Group controlId='password'>
             <Form.Label>Password</Form.Label>
             <Form.Control
               type='password'
@@ -84,7 +89,7 @@ const ProfileScreen = ({ location, history }) => {
             ></Form.Control>
           </Form.Group>
 
-          <Form.Group controlID='confirmPassword'>
+          <Form.Group controlId='confirmPassword'>
             <Form.Label>Confirm Password</Form.Label>
             <Form.Control
               type='password'
