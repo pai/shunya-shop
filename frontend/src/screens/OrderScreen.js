@@ -66,7 +66,7 @@ const OrderScreen = ({ match }) => {
   return loading ? (
     <Loader />
   ) : error ? (
-    <Message>{error}</Message>
+    <Message variant='danger'>{error}</Message>
   ) : (
     <>
       <h1>Order {order._id}</h1>
