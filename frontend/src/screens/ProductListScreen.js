@@ -42,9 +42,9 @@ const ProductListScreen = ({ history, match }) => {
     }
 
     if (successCreate) {
-      history.push(`/admin/products/${createdProduct._id}/edit`)
+      history.push(`/admin/product/${createdProduct._id}/edit`)
     } else {
-      dispatch(listProducts)
+      dispatch(listProducts())
     }
   }, [
     dispatch,
@@ -61,7 +61,7 @@ const ProductListScreen = ({ history, match }) => {
     }
   }
 
-  const createProductHandlerr = () => {
+  const createProductHandler = () => {
     dispatch(createProduct())
   }
 
@@ -72,7 +72,7 @@ const ProductListScreen = ({ history, match }) => {
           <h1>Products</h1>
         </Col>
         <Col className='text-right'>
-          <Button className='my-3' onClick={createProductHandlerr}>
+          <Button className='my-3' onClick={createProductHandler}>
             <i className='fas fa-plus'></i>Create Product
           </Button>
         </Col>
