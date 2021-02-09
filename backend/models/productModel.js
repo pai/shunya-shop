@@ -64,6 +64,10 @@ const productSchema = mongoose.Schema(
       required: true,
       default: 0,
     },
+    localePair: {
+      type: String,
+      required: true,
+    },
   },
   {
     timestamps: true,
