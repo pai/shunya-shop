@@ -6,6 +6,8 @@ import { Row, Col, Image, Card, Button, ListGroup } from 'react-bootstrap'
 import { useDispatch, useSelector } from 'react-redux'
 import Message from '../components/Message'
 import Loader from '../components/Loader'
+import WalletButton from '../components/WalletButton'
+import useWeb3Modal from '../hooks/useWeb3Modal'
 import {
   getOrderDetails,
   payOrder,
@@ -16,12 +18,20 @@ import {
   ORDER_DELIVER_RESET,
 } from '../constants/orderConstants'
 
+import { getDefaultProvider } from '@ethersproject/providers'
+import { Contract } from '@ethersproject/contracts'
+import { addresses, abis } from '../contracts'
+import GET_TRANSFERS from '../graphql/subgraph'
+
 const OrderScreen = ({ match, history }) => {
   const orderId = match.params.id
 
   const [sdkReady, setSdkReady] = useState(false)
 
   const dispatch = useDispatch()
+
+  const userLogin = useSelector((state) => state.userLogin)
+  const { userInfo } = userLogin
 
   const orderDetails = useSelector((state) => state.orderDetails)
   const { order, loading, error } = orderDetails
@@ -31,9 +41,6 @@ const OrderScreen = ({ match, history }) => {
 
   const orderDeliver = useSelector((state) => state.orderDeliver)
   const { loading: loadingDeliver, success: successDeliver } = orderDeliver
-
-  const userLogin = useSelector((state) => state.userLogin)
-  const { userInfo } = userLogin
 
   if (!loading) {
     //   Calculate prices
@@ -83,6 +90,25 @@ const OrderScreen = ({ match, history }) => {
 
   const deliverHandler = () => {
     dispatch(deliverOrder(order))
+  }
+
+  const [provider, loadWeb3Modal, logoutOfWeb3Modal] = useWeb3Modal()
+
+  async function readOnChainData() {
+    // Should replace with the end-user wallet, e.g. Metamask
+    const defaultProvider = getDefaultProvider()
+    // Create an instance of an ethers.js Contract
+    // Read more about ethers.js on https://docs.ethers.io/v5/api/contract/contract/
+    const ceaErc20 = new Contract(
+      addresses.ceaErc20,
+      abis.erc20,
+      defaultProvider
+    )
+    // A pre-defined address that owns some CEAERC20 tokens
+    const tokenBalance = await ceaErc20.balanceOf(
+      '0x3f8CB69d9c0ED01923F11c829BaE4D9a4CB6c82C'
+    )
+    console.log({ tokenBalance: tokenBalance.toString() })
   }
 
   return loading ? (
@@ -196,7 +222,7 @@ const OrderScreen = ({ match, history }) => {
                   <Col>${order.totalPrice}</Col>
                 </Row>
               </ListGroup.Item>
-              {!order.isPaid && (
+              {!order.isPaid && order.paymentMethod === 'PayPal' && (
                 <ListGroup.Item>
                   {loadingPay && <Loader />}
                   {!sdkReady ? (
@@ -207,6 +233,21 @@ const OrderScreen = ({ match, history }) => {
                       onSuccess={successPaymentHandler}
                     />
                   )}
+                </ListGroup.Item>
+              )}
+              {!order.isPaid && order.paymentMethod === 'Mudrika' && (
+                <ListGroup.Item>
+                  <WalletButton
+                    provider={provider}
+                    loadWeb3Modal={loadWeb3Modal}
+                    logoutOfWeb3Modal={logoutOfWeb3Modal}
+                    amount={order.totalPrice}
+                    onSuccess={successPaymentHandler}
+                  />
+                  <p />
+                  <Button onClick={() => readOnChainData()}>
+                    Read On-Chain Balance
+                  </Button>
                 </ListGroup.Item>
               )}
               {loadingDeliver && <Loader />}
