@@ -1,7 +1,7 @@
 # shunya-shop
 Marketplace App
 
-Private cryptocurrency enabled e-Commerce app build with MERN stack and Redux
+web3 enabled e-Commerce app build with MERN stack and Redux
 
 # Features
 
